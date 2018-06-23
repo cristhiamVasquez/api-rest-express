@@ -1,12 +1,29 @@
 const express = require('express');
 const Usuario = require('../models/usuario');
-
+const bcrypt = require('bcrypt');
+const _ = require('underscore');
 
 const app = express();
 
 
 app.get('/usuario', function(req, res) {
-    res.json('get Usuario LOCAL!!!')
+
+    Usuario.find({})
+        .exec((err, usuario) => {
+            if (err) {
+                return res.status(400).json({
+                    ok: false,
+                    err
+                });
+            }
+
+            res.json({
+                ok: true,
+                usuario
+            })
+        })
+
+
 });
 
 app.post('/usuario', function(req, res) {
@@ -16,7 +33,7 @@ app.post('/usuario', function(req, res) {
     let usuario = new Usuario({
         nombre: body.nombre,
         email: body.email,
-        password: body.password,
+        password: bcrypt.hashSync(body.password, 10),
         role: body.role
     });
 
@@ -29,6 +46,8 @@ app.post('/usuario', function(req, res) {
                 err
             });
         }
+
+        //usuarioDB.password = null;
 
         res.json({
             ok: true,
@@ -43,10 +62,24 @@ app.post('/usuario', function(req, res) {
 app.put('/usuario/:id', function(req, res) {
 
     let id = req.params.id;
+    let body = _.pick(req.body, ['nombre', 'email', 'img', 'role', 'estado']);
 
-    res.json({
-        id
-    })
+
+    Usuario.findByIdAndUpdate(id, body, { new: true, runValidators: true }, (err, usuarioDB) => {
+
+        if (err) {
+            return res.status(400).json({
+                ok: false,
+                err
+            });
+        }
+
+        res.json({
+            ok: true,
+            usuario: usuarioDB
+        });
+
+    });
 });
 
 app.delete('/usuario', function(req, res) {
