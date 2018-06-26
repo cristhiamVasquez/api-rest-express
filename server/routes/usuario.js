@@ -8,7 +8,19 @@ const app = express();
 
 app.get('/usuario', function(req, res) {
 
-    Usuario.find({})
+    /*let estadoActivo = {
+        estado: true
+    }*/
+
+    let desde = req.query.desde || 0;
+    desde = Number(desde);
+
+    let limite = req.query.limite || 0;
+    limite = Number(limite);
+
+    Usuario.find({ estado: true }, 'nombre email role estado google')
+        .skip(desde)
+        .limit(limite)
         .exec((err, usuario) => {
             if (err) {
                 return res.status(400).json({
@@ -17,12 +29,17 @@ app.get('/usuario', function(req, res) {
                 });
             }
 
-            res.json({
-                ok: true,
-                usuario
+            Usuario.count({ estado: true }, (err, conteo) => {
+
+                res.json({
+                    ok: true,
+                    usuario,
+                    cantidad_registros: conteo
+                })
+
+
             })
         })
-
 
 });
 
@@ -82,8 +99,65 @@ app.put('/usuario/:id', function(req, res) {
     });
 });
 
-app.delete('/usuario', function(req, res) {
-    res.json('delete Usuario')
+app.delete('/usuario/:id', function(req, res) {
+
+
+    //ACTUALIZAR EL ESTADO DEL USUARIO PARA DESHABILITARLO
+
+    let id = req.params.id;
+
+    let cambiaEstado = {
+        estado: false
+    }
+
+    Usuario.findByIdAndUpdate(id, cambiaEstado, { new: true }, (err, usuarioEliminado) => {
+
+        if (err) {
+            return res.status(400).json({
+                ok: false,
+                err
+            });
+        }
+
+        res.json({
+            ok: true,
+            usuario: usuarioEliminado
+        })
+
+
+    })
+
+
+
+    /*
+        //Eliminar registro de la base de datos por ID
+        let id = req.params.id;
+
+        Usuario.findByIdAndRemove(id, (err, usuarioEliminado) => {
+            if (err) {
+                return res.status(400).json({
+                    ok: false,
+                    err
+                });
+            }
+
+            if (!usuarioEliminado) {
+                return res.status(400).json({
+                    ok: false,
+                    err: {
+                        message: 'Usuario no encontrado'
+                    }
+                });
+            }
+
+            res.json({
+                ok: true,
+                usuario: usuarioEliminado
+            })
+        })
+        
+        */
+
 });
 
 
