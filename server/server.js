@@ -21,7 +21,8 @@ app.use(require('./routes/usuario'));
 
 
 //Conexion a mongodb
-mongoose.connect('mongodb://localhost:27017/cafe', (err, resp) => {
+//mongoose.connect(process.env.PORT, (err, resp) => {
+mongoose.connect(process.env.URLDB, (err, resp) => {
 
     if (err) {
         throw err;
@@ -34,5 +35,5 @@ mongoose.connect('mongodb://localhost:27017/cafe', (err, resp) => {
 
 
 app.listen(process.env.PORT, () => {
-    console.log('escuchando el puerto: ', process.env.PORT);
+    console.log('escuchando el puerto: ', process.env.URLDB);
 });
