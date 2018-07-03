@@ -17,7 +17,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 
-app.use(require('./routes/usuario'));
+//Configuracion de rutas globales
+app.use(require('./routes/index'));
 
 
 //Conexion a mongodb
