@@ -4,7 +4,7 @@ const _ = require('underscore');
 
 
 const Usuario = require('../models/usuario');
-const { verificaToken } = require('../middlewares/autenticacion');
+const { verificaToken, verificaAdminRole } = require('../middlewares/autenticacion');
 
 const app = express();
 
@@ -15,11 +15,11 @@ app.get('/usuario', verificaToken, (req, res) => {
         estado: true
     }*/
 
-    return res.json({
+    /*return res.json({
         usuario: req.usuario,
         nombre: req.usuario.nombre,
         email: req.usuario.email
-    });
+    });*/
 
     let desde = req.query.desde || 0;
     desde = Number(desde);
@@ -52,7 +52,7 @@ app.get('/usuario', verificaToken, (req, res) => {
 
 });
 
-app.post('/usuario', verificaToken, (req, res) => {
+app.post('/usuario', [verificaToken, verificaAdminRole], (req, res) => {
 
     let body = req.body;
 
@@ -85,7 +85,7 @@ app.post('/usuario', verificaToken, (req, res) => {
 
 });
 
-app.put('/usuario/:id', verificaToken, (req, res) => {
+app.put('/usuario/:id', [verificaToken, verificaAdminRole], (req, res) => {
 
     let id = req.params.id;
     let body = _.pick(req.body, ['nombre', 'email', 'img', 'role', 'estado']);
@@ -108,7 +108,7 @@ app.put('/usuario/:id', verificaToken, (req, res) => {
     });
 });
 
-app.delete('/usuario/:id', verificaToken, (req, res) => {
+app.delete('/usuario/:id', [verificaToken, verificaAdminRole], (req, res) => {
 
 
     //ACTUALIZAR EL ESTADO DEL USUARIO PARA DESHABILITARLO
