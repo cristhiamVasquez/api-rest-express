@@ -10,6 +10,7 @@ process.env.PORT = process.env.PORT || 3000;
 process.env.NODE_ENV = process.env.NODE_ENV || 'dev';
 
 
+
 // ======================
 // -----BASE DE DATOS----
 // ======================
@@ -17,7 +18,7 @@ let urlDB;
 
 if (process.env.NODE_ENV === 'dev') {
     urlDB = 'mongodb://localhost:27017/cafe';
-} else {} {
+} else {
     //    urlDB = process.env.MONGO_URI;
     urlDB = 'mongodb://cafe-user:cafe123@ds061375.mlab.com:61375/cafe-db';
 }
@@ -49,3 +50,9 @@ if (process.env.SEED === 'este-es-el-seed-desarrollo') {
 
 process.env.SEED = seed;
 */
+
+
+// ======================
+// Google ClienID
+// ======================
+process.env.CLIENT_ID = process.env.CLIENT_ID || '798208209837-ua7rlmun4jl6dlg1pu3a3aa650iu2l5q.apps.googleusercontent.com';
