@@ -75,11 +75,13 @@ async function verify(token) {
         //[CLIENT_ID_1, CLIENT_ID_2, CLIENT_ID_3]
     });
     const payload = ticket.getPayload();
+    //console.log(JSON.stringify(payload, undefined, 2));
     //const userid = payload['sub'];
 
-    //console.log(payload.name);
+
+    /*console.log(payload.name);
     console.log(payload.email);
-    console.log(payload.picture);
+    console.log(payload.picture);*/
 
 }
 
