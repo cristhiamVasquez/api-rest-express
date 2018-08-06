@@ -53,12 +53,19 @@ app.post('/categoria/', verificaToken, (req, res) => {
 
     let categoria = new Categoria({
         descripcion: body.descripcion,
-        usuario: body.usuario
+        usuario: req.usuario._id
     });
 
     categoria.save((err, categoriaDB) => {
 
         if (err) {
+            return res.status(500).json({
+                ok: false,
+                err
+            });
+        };
+
+        if (!categoriaDB) {
             return res.status(400).json({
                 ok: false,
                 err
@@ -80,9 +87,21 @@ app.post('/categoria/', verificaToken, (req, res) => {
 app.put('/categoria/:id', verificaToken, (req, res) => {
 
     let id = req.params.id;
+    let body = req.body;
 
-    Categoria.findByIdAndUpdate(id, req.params.descripcion, (err, categoriaDB) => {
+    let descCategoria = {
+        descripcion: body.descripcion
+    };
+
+    Categoria.findByIdAndUpdate(id, descCategoria, { new: true, runValidators: true }, (err, categoriaDB) => {
         if (err) {
+            return res.status(500).json({
+                ok: false,
+                err
+            });
+        };
+
+        if (!categoriaDB) {
             return res.status(400).json({
                 ok: false,
                 err
@@ -99,7 +118,7 @@ app.put('/categoria/:id', verificaToken, (req, res) => {
 
 
 //Eliminar categoria de la base de datos con usuario ADMIN_ROLE
-app.delete('/categoria/:id', [verificaToken, verificaAdminRole], (err, categoriaEliminada) => {
+app.delete('/categoria/:id', [verificaToken, verificaAdminRole], (req, res) => {
 
     let id = req.params.id;
 
@@ -124,8 +143,11 @@ app.delete('/categoria/:id', [verificaToken, verificaAdminRole], (err, categoria
 
         res.json({
             ok: true,
-            categoria: categoriaEliminada
-        })
+            accion: {
+                message: 'Categoria eliminada',
+                categoria: categoriaEliminada
+            }
+        });
 
     });
 
